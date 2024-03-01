@@ -17,7 +17,14 @@ function ctrl_c (){
 
 trap ctrl_c INT
 function ipNetworkID(){
-	
+	ipDir="$ipDir"
+	echo -e "$ipDir" > reportIP.txt
+	#ipdiff=$(cat reportIP.txt | awk -F. '{print $1}' > reportIP2.txt)
+	for num in $(seq 1 4) ; do
+		ipdiff=$(cat reportIP.txt | awk -v n="$num" -F. '{print $n}')
+		echo "obase=2;$ipdiff" | bc
+	done
+	#rm reportIP2.txt
 }
 #-----------------------------------------------
 #Variables
@@ -25,15 +32,15 @@ function ipNetworkID(){
 
 declare -i parameterCount=0
 
-while getopts "i" arg ;do
+while getopts "i:" arg ;do
 	case $arg in
-	i) ipDir=$OPTARG;ipDir=$OPTARG;  let parameterCount+=1;;
+	i) ipDir=$OPTARG;  let parameterCount+=1;;
 	esac
 done
 
 if [ $parameterCount -eq 1 ]; then
-	echo "COÑO"
+	ipNetworkID $ipDir
 fi
 
 
-sleep 10
+#sleep 10
