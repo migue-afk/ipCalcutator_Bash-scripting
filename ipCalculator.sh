@@ -23,6 +23,7 @@ function ipNetworkID(){
 	for num in $(seq 1 4) ; do
 		ipdiff=$(cat reportIP.txt | awk -v n="$num" -F. '{print $n}')
 		echo "obase=2;$ipdiff" | bc
+
 	done
 	#rm reportIP2.txt
 }
