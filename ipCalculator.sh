@@ -45,6 +45,8 @@ function decToBinary(){
 
 
 function networkId(){
+
+# Shows Ip Address (Decimal to Binary)
 	decimal="$decimal"
 	echo -e "$decimal" > report.txt
 	for num in $(seq 1 4) ; do
@@ -59,10 +61,10 @@ function networkId(){
 		str="$str$decBins."
 	done
 	str=${str%?}
-	echo "ip Binary $str --> $(cat report.txt)"
+	echo -e "\nIP Address   $str --> $(cat report.txt)"
 	#echo " "
 
-
+# Shows netMask in binary
 	mask="$mask"
 	echo -e "$mask" > report.txt
 	for num in $(seq 1 4) ; do
@@ -77,8 +79,39 @@ function networkId(){
 		strm="$strm$maskBins."
 	done
 	strm=${strm%?}
-	echo "ip Binary $strm --> $(cat report.txt)"
+	echo "Network Mask $strm --> $(cat report.txt)"
 	#echo " "
+
+# Shows Network ID
+	str=""
+	echo -e "$decimal" > report.txt
+	echo -e "$mask" > report2.txt
+	for num in $(seq 1 4);do
+		maskBin=$(cat report.txt | awk -v n="$num" -F. '{print $n}')
+		decimalBin=$(cat report2.txt | awk -v n="$num" -F. '{print $n}')
+		opAND=$(echo "$(($maskBin & $decimalBin))")
+		#echo "$opAND"
+		strAND="$strAND$opAND."
+#		echo "$decimalBin"
+	done
+	strAND=${strAND%?}
+	echo -e "$strAND" > report.txt
+	for num in $(seq 1 4);do
+		netID=$(cat report.txt | awk -v n="$num" -F. '{print $n}')
+		netIDBin=$(echo "obase=2;$netID" | bc)
+		netIDBin=$(printf "%07d"$netIDBin)
+		echo "$netIDBin" > report2.txt
+		if [ $(cat report2.txt | wc -L) -gt 8 ]; then 
+			idNet=$(echo "$(cat report2.txt | wc -L)-8" | bc)
+			netIDBin=${netIDBin:$idNet}
+		fi
+
+		str="$str$netIDBin."	
+	done
+	str=${str%?}
+	echo -e "\nNetwork ID   $str --> $strAND\n"
+
+
 }
 #-----------------------------------------------
 #Variables
@@ -89,6 +122,7 @@ declare -i secCountIp=0
 declare -i secCountMs=0
 str=""
 strm=""
+strAND=""
 
 while getopts "i:m:" arg ;do
 	case $arg in
