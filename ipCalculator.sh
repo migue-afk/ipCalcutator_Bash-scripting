@@ -29,17 +29,20 @@ function decToBinary(){
 	for num in $(seq 1 4) ; do
 		decBin=$(cat report.txt | awk -v n="$num" -F. '{print $n}')
 		decBins=$(echo "obase=2;$decBin" | bc);
-		str="$str$decBins."
+		decBins=$(printf "%07d"$decBins)
+		echo "$decBins" >> report22.txt
+	#	str="$str$decBins."
 	done
-	str=${str%?}
-	echo "ip Binary $str"
+	#str=${str%?}
+	#echo "ip Binary $str --> $(cat report.txt)"
+	#echo " "
 
 }
 
 
 
 function networkId(){
-	ipDir="$ipDir"
+	ipDir="$decimal"
 		echo -e "$ipDir" > report.txt
 		for num in $(seq 1 4) ; do
 			ipBin=$(cat report.txt | awk -v n="$num" -F. '{print $n}')
@@ -58,6 +61,7 @@ function networkId(){
 		done
 		strm=${strm%?}
 		echo "mask Binary $strm -- $(cat report.txt)"
+	
 }
 #-----------------------------------------------
 #Variables
