@@ -30,11 +30,15 @@ function decToBinary(){
 		decBin=$(cat report.txt | awk -v n="$num" -F. '{print $n}')
 		decBins=$(echo "obase=2;$decBin" | bc);
 		decBins=$(printf "%07d"$decBins)
-		echo "$decBins" >> report22.txt
-	#	str="$str$decBins."
+		echo "$decBins" > report2.txt
+			if [ $(cat report2.txt | wc -L) -gt 8 ]; then
+				id=$(echo "$(cat report2.txt | wc -L)-8" | bc)
+				decBins=${decBins:$id}
+			fi
+		str="$str$decBins."
 	done
-	#str=${str%?}
-	#echo "ip Binary $str --> $(cat report.txt)"
+	str=${str%?}
+	echo "ip Binary $str --> $(cat report.txt)"
 	#echo " "
 
 }
