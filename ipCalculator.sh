@@ -15,17 +15,30 @@ function ctrl_c (){
 	exit 1
 }
 
+function helpPanel(){
+	echo -e "${yellowColour}\n[!]${endColour} ${redColour}Help Panle\n${endColour} "
+	echo -e "i) insert IP address"
+	echo -e "m) insert Network Mask"
+}
+
+
 trap ctrl_c INT
-function ipNetworkID(){
+function ipToBinary(){
 	ipDir="$ipDir"
 	echo -e "$ipDir" > reportIP.txt
-	#ipdiff=$(cat reportIP.txt | awk -F. '{print $1}' > reportIP2.txt)
 	for num in $(seq 1 4) ; do
-		ipdiff=$(cat reportIP.txt | awk -v n="$num" -F. '{print $n}')
-		echo "obase=2;$ipdiff" | bc
-
+		ipBin=$(cat reportIP.txt | awk -v n="$num" -F. '{print $n}')
+		echo "obase=2;$ipBin" | bc
 	done
-	#rm reportIP2.txt
+}
+
+function maskToBinary(){
+	mask="$mask"
+	echo -e "$mask" > reportIP.txt
+	for num in $(seq 1 4) ; do
+		maskBin=$(cat reportIP.txt | awk -v n="$num" -F. '{print $n}')
+		echo "obase=2;$maskBin" | bc
+	done
 }
 #-----------------------------------------------
 #Variables
@@ -33,14 +46,19 @@ function ipNetworkID(){
 
 declare -i parameterCount=0
 
-while getopts "i:" arg ;do
+while getopts "i:m:" arg ;do
 	case $arg in
 	i) ipDir=$OPTARG;  let parameterCount+=1;;
-	esac
+	m) mask=$OPTARG; let parameterCount+=2;;
+esac
 done
 
 if [ $parameterCount -eq 1 ]; then
-	ipNetworkID $ipDir
+	ipToBinary $ipDir
+elif [ $parameterCount -eq 2 ];then
+	maskToBinary $mask
+else
+	helpPanel
 fi
 
 
