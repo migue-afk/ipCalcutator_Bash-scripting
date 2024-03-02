@@ -40,32 +40,45 @@ function decToBinary(){
 	str=${str%?}
 	echo "ip Binary $str --> $(cat report.txt)"
 	#echo " "
-
 }
 
 
 
 function networkId(){
-	ipDir="$decimal"
-		echo -e "$ipDir" > report.txt
-		for num in $(seq 1 4) ; do
-			ipBin=$(cat report.txt | awk -v n="$num" -F. '{print $n}')
-			ipBins=$(echo "obase=2;$ipBin" | bc);
-			str="$str$ipBins."
-		done
-		str=${str%?}
-		echo "ip Binary   $str --> $(cat report.txt)"
+	decimal="$decimal"
+	echo -e "$decimal" > report.txt
+	for num in $(seq 1 4) ; do
+		decBin=$(cat report.txt | awk -v n="$num" -F. '{print $n}')
+		decBins=$(echo "obase=2;$decBin" | bc);
+		decBins=$(printf "%07d"$decBins)
+		echo "$decBins" > report2.txt
+			if [ $(cat report2.txt | wc -L) -gt 8 ]; then
+				id=$(echo "$(cat report2.txt | wc -L)-8" | bc)
+				decBins=${decBins:$id}
+			fi
+		str="$str$decBins."
+	done
+	str=${str%?}
+	echo "ip Binary $str --> $(cat report.txt)"
+	#echo " "
+
 
 	mask="$mask"
-		echo -e "$mask" > report.txt
-		for num in $(seq 1 4) ; do
-			ipMask=$(cat report.txt | awk -v n="$num" -F. '{print $n}')
-			ipMasks=$(echo "obase=2;$ipMask" | bc);
-			strm="$strm$ipMasks."
-		done
-		strm=${strm%?}
-		echo "mask Binary $strm -- $(cat report.txt)"
-	
+	echo -e "$mask" > report.txt
+	for num in $(seq 1 4) ; do
+		maskBin=$(cat report.txt | awk -v n="$num" -F. '{print $n}')
+		maskBins=$(echo "obase=2;$maskBin" | bc);
+		maskBins=$(printf "%07d"$maskBins)
+		echo "$maskBins" > report2.txt
+			if [ $(cat report2.txt | wc -L) -gt 8 ]; then
+				id=$(echo "$(cat report2.txt | wc -L)-8" | bc)
+				maskBins=${maskBins:$id}
+			fi
+		strm="$strm$maskBins."
+	done
+	strm=${strm%?}
+	echo "ip Binary $strm --> $(cat report.txt)"
+	#echo " "
 }
 #-----------------------------------------------
 #Variables
