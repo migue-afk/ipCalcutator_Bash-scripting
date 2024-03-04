@@ -16,9 +16,11 @@ function ctrl_c (){
 }
 
 function helpPanel(){
-	echo -e "${yellowColour}\n[!]${endColour} ${redColour}Help Panle\n${endColour} "
-	echo -e "i) insert IP address"
-	echo -e "m) insert Network Mask"
+	echo -e "${yellowColour}\n[!]${endColour} ${redColour}Help Panel\n${endColour} "
+	echo -e " ${yellowColour}[+]${endColour} i) ${grayColour}Insert IP address${endColour}"
+	echo -e " ${yellowColour}[+]${endColour} m) ${grayColour}Insert Network Mask${endColour}"
+	echo -e "\n ${greenColour}Example:${endColour}\n"
+	echo -e "	${grayColour}./ipCalculator.sh -i 192.168.100.150 -m 21${endColour}\n"
 }
 
 trap ctrl_c INT
@@ -38,7 +40,8 @@ function decToBinary(){
 		str="$str$decBins."
 	done
 	str=${str%?}
-	echo "ip Binary: $str --> $(cat report.txt)"
+	echo -e "\n${purpleColour}ip Binary:${endColour} ${grayColour}$str${endColour} --> ${redColour}$(cat report.txt)${endColour}\n"
+	rm report.txt report2.txt
 }
 
 function networkId(){
@@ -58,7 +61,7 @@ function networkId(){
 		str="$str$decBins."
 	done
 	str=${str%?}
-	echo -e "\nIP Address:  $str --> $(cat report.txt)"
+	echo -e "\n${purpleColour}IP Address:${endColour}  ${grayColour}$str${endColour} --> ${redColour}$(cat report.txt)${endColour}"
 
 # Shows netMask in binary
 	mask="$strDc"
@@ -75,7 +78,7 @@ function networkId(){
 		strm="$strm$maskBins."
 	done
 	strm=${strm%?}
-	echo "Netmask:     $strm --> $(cat report.txt)"
+	echo -e "${purpleColour}Netmask:${endColour}     ${grayColour}$strm${endColour} --> ${redColour}$(cat report.txt)${endColour}"
 	#echo " "
 
 # Shows Network ID
@@ -104,8 +107,9 @@ function networkId(){
 		str="$str$netIDBin."	
 	done
 	str=${str%?}
-	echo -e "\nNetwork ID:  $str --> $strAND"
-	echo -e "Host/Net:    $hostNum\n"
+	echo -e "\n${purpleColour}Network ID:${endColour}  ${grayColour}$str${endColour} --> ${redColour}$strAND${endColour}"
+	echo -e "${purpleColour}Host/Net:${endColour}    ${redColour}$hostNum${endColour}\n"
+	rm report.txt report2.txt
 }
 
 #-----------------------------------------------
@@ -133,8 +137,6 @@ done
 
 if [ $parameterCount -eq 1 ]; then
 	decToBinary $decimal
-elif [ $parameterCount -eq 2 ];then
-	maskToBinary $mask
 elif [ $secCountIp -eq 1 ] && [ $secCountMs -eq 1 ]; then
 	number="$number"
 	hostNum=$(echo "(2^(32-$number))-2" | bc)
