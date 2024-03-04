@@ -21,8 +21,8 @@ function helpPanel(){
 	echo -e "m) insert Network Mask"
 }
 
-
 trap ctrl_c INT
+
 function decToBinary(){
 	decimal="$decimal"
 	echo -e "$decimal" > report.txt
@@ -38,11 +38,8 @@ function decToBinary(){
 		str="$str$decBins."
 	done
 	str=${str%?}
-	echo "ip Binary $str --> $(cat report.txt)"
-	#echo " "
+	echo "ip Binary: $str --> $(cat report.txt)"
 }
-
-
 
 function networkId(){
 
@@ -61,11 +58,10 @@ function networkId(){
 		str="$str$decBins."
 	done
 	str=${str%?}
-	echo -e "\nIP Address   $str --> $(cat report.txt)"
-	#echo " "
+	echo -e "\nIP Address:  $str --> $(cat report.txt)"
 
 # Shows netMask in binary
-	mask="$mask"
+	mask="$strDc"
 	echo -e "$mask" > report.txt
 	for num in $(seq 1 4) ; do
 		maskBin=$(cat report.txt | awk -v n="$num" -F. '{print $n}')
@@ -79,7 +75,7 @@ function networkId(){
 		strm="$strm$maskBins."
 	done
 	strm=${strm%?}
-	echo "Network Mask $strm --> $(cat report.txt)"
+	echo "Netmask:     $strm --> $(cat report.txt)"
 	#echo " "
 
 # Shows Network ID
@@ -105,16 +101,15 @@ function networkId(){
 			idNet=$(echo "$(cat report2.txt | wc -L)-8" | bc)
 			netIDBin=${netIDBin:$idNet}
 		fi
-
 		str="$str$netIDBin."	
 	done
 	str=${str%?}
-	echo -e "\nNetwork ID   $str --> $strAND\n"
-
-
+	echo -e "\nNetwork ID:  $str --> $strAND"
+	echo -e "Host/Net:    $hostNum\n"
 }
+
 #-----------------------------------------------
-#Variables
+# Variables
 #-----------------------------------------------
 
 declare -i parameterCount=0
@@ -123,11 +118,16 @@ declare -i secCountMs=0
 str=""
 strm=""
 strAND=""
+strDc=""
+
+#-----------------------------------------------
+# Program
+#-----------------------------------------------
 
 while getopts "i:m:" arg ;do
 	case $arg in
 	i) decimal=$OPTARG; secCountIp=1;let parameterCount+=1;;
-	m) mask=$OPTARG; secCountMs=1;let parameterCount+=2;;
+	m) number=$OPTARG; secCountMs=1;let parameterCount+=2;;
 esac
 done
 
@@ -136,7 +136,34 @@ if [ $parameterCount -eq 1 ]; then
 elif [ $parameterCount -eq 2 ];then
 	maskToBinary $mask
 elif [ $secCountIp -eq 1 ] && [ $secCountMs -eq 1 ]; then
-	networkId $decimal $mask
+	number="$number"
+	hostNum=$(echo "(2^(32-$number))-2" | bc)
+	for num in $(seq 1 $number);do
+		strDc="$strDc 1"
+	done
+	echo "$strDc" > report.txt
+	strDc=$(cat report.txt | tr -d ' ')
+	strDc=$(printf "%032d"$strDc)
+	echo "$strDc" > report.txt
+			if [ $(cat report.txt | wc -L) -gt 32 ]; then
+				id=$(echo "$(cat report.txt | wc -L)-32" | bc)
+				strDc=${strDc:$id}
+			fi
+	echo "$strDc" | rev > report.txt
+	strDc=""
+	mskBin=$(echo "$(cat report.txt | cut -c 1-8)")
+	mskBin=$(echo "ibase=2;$mskBin" | bc)
+	strDc="$strDc$mskBin."
+	mskBin=$(echo "$(cat report.txt | cut -c 9-16)")
+	mskBin=$(echo "ibase=2;$mskBin" | bc)
+	strDc="$strDc$mskBin."	
+	mskBin=$(echo "$(cat report.txt | cut -c 17-24)")
+	mskBin=$(echo "ibase=2;$mskBin" | bc)
+	strDc="$strDc$mskBin."	
+	mskBin=$(echo "$(cat report.txt | cut -c 25-32)")
+	mskBin=$(echo "ibase=2;$mskBin" | bc)
+	strDc="$strDc$mskBin"
+	networkId $decimal $strDc
 else
 	helpPanel
 fi
