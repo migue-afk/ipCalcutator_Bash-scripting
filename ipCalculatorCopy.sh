@@ -152,11 +152,16 @@ elif [ $secCountIp -eq 1 ] && [ $secCountMs -eq 1 ]; then
 				strDc=${strDc:$id}
 			fi
 	echo "$strDc" | rev > report.txt
-	echo "$(cat report.txt | cut -c 1-8)" > report2.txt
-	echo "$(cat report.txt | cut -c 9-16)" >> report2.txt
-	echo "$(cat report.txt | cut -c 17-24)" >> report2.txt
-	echo "$(cat report.txt | cut -c 25-32)" >> report2.txt
-
+	strDc=""
+	mskBin=$(echo "$(cat report.txt | cut -c 1-8)")
+	strDc="$strDc$mskBin."	
+	mskBin=$(echo "$(cat report.txt | cut -c 9-16)")
+	strDc="$strDc$mskBin."	
+	mskBin=$(echo "$(cat report.txt | cut -c 17-24)")
+	strDc="$strDc$mskBin."	
+	mskBin=$(echo "$(cat report.txt | cut -c 25-32)")
+	strDc="$strDc$mskBin"	
+	echo "$strDc"
 
 	sleep 10
 
