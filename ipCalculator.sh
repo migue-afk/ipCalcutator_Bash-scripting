@@ -20,6 +20,7 @@ function helpPanel(){
 	echo -e " ${yellowColour}[+]${endColour} i) ${grayColour}Insert IP address${endColour}"
 	echo -e " ${yellowColour}[+]${endColour} m) ${grayColour}Insert Network Mask${endColour}"
 	echo -e "\n ${greenColour}Example:${endColour}\n"
+	echo -e "	${grayColour}./ipCalculator.sh -i 192.168.100.150${endColour}"
 	echo -e "	${grayColour}./ipCalculator.sh -i 192.168.100.150 -m 21${endColour}\n"
 }
 
